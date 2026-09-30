@@ -1,4 +1,4 @@
-import { startOfMonth, endOfMonth, parseISO, isWithinInterval } from 'date-fns';
+import { parseISO, isWithinInterval } from 'date-fns';
 import type { Expense, Filters } from '../types';
 
 export function filterExpenses(expenses: Expense[], filters: Filters): Expense[] {
@@ -36,14 +36,6 @@ export function filterExpenses(expenses: Expense[], filters: Filters): Expense[]
   });
 
   return filtered;
-}
-
-export function getMonthRange(dateStr: string): { start: string; end: string } {
-  const d = parseISO(dateStr);
-  return {
-    start: startOfMonth(d).toISOString().split('T')[0],
-    end: endOfMonth(d).toISOString().split('T')[0],
-  };
 }
 
 export function getMonthKey(dateStr: string): string {

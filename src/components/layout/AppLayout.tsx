@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Outlet, NavLink, useLocation } from 'react-router-dom';
+import { Outlet, NavLink } from 'react-router-dom';
 import {
   LayoutDashboard,
   Wallet,
@@ -22,15 +22,10 @@ const bottomLinks = [
 export function AppLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const theme = useStore((s) => s.theme);
-  const location = useLocation();
 
   useEffect(() => {
     document.documentElement.classList.toggle('dark', theme === 'dark');
   }, [theme]);
-
-  useEffect(() => {
-    setSidebarOpen(false);
-  }, [location.pathname]);
 
   return (
     <div className="flex min-h-screen">
@@ -48,6 +43,7 @@ export function AppLayout() {
             key={to}
             to={to}
             end={to === '/'}
+            onClick={() => setSidebarOpen(false)}
             className={({ isActive }) =>
               `flex flex-1 flex-col items-center gap-0.5 py-2 text-[10px] font-medium transition-colors ${
                 isActive

@@ -6,13 +6,14 @@ import { Button } from '../ui/Button';
 import { useStore } from '../../store/useStore';
 import { useFormatCurrency } from '../../hooks/useFormatCurrency';
 import { getMonthKey } from '../../utils/filter';
+import { currentMonthKey } from '../../utils/date';
 import { CATEGORIES } from '../../types';
 import type { Category } from '../../types';
 
 export function BudgetProgress() {
   const { expenses, budgets, removeBudget } = useStore();
   const formatCurrency = useFormatCurrency();
-  const currentMonth = getMonthKey(new Date().toISOString());
+  const currentMonth = currentMonthKey();
 
   const monthExpenses = expenses.filter(
     (e) => getMonthKey(e.date) === currentMonth

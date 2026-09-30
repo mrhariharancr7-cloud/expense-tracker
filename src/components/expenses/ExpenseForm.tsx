@@ -4,6 +4,7 @@ import { Select } from '../ui/Select';
 import { Button } from '../ui/Button';
 import { CATEGORIES, CATEGORY_LABELS } from '../../types';
 import { useStore } from '../../store/useStore';
+import { todayISO } from '../../utils/date';
 import type { Category, Expense } from '../../types';
 
 interface ExpenseFormProps {
@@ -24,7 +25,7 @@ export function ExpenseForm({ onClose, editExpense }: ExpenseFormProps) {
     amount: editExpense?.amount.toString() || '',
     category: editExpense?.category || 'food' as Category,
     description: editExpense?.description || '',
-    date: editExpense?.date || new Date().toISOString().split('T')[0],
+    date: editExpense?.date || todayISO(),
     isRecurring: editExpense?.isRecurring || false,
     recurringInterval: editExpense?.recurringInterval || undefined as 'weekly' | 'monthly' | 'yearly' | undefined,
   });

@@ -1,5 +1,4 @@
 import { Wallet, TrendingUp, TrendingDown, PiggyBank } from 'lucide-react';
-import { subMonths } from 'date-fns';
 import { StatCard } from '../components/dashboard/StatCard';
 import { BudgetAlertBanner } from '../components/budget/BudgetAlertBanner';
 import { CategoryPieChart } from '../components/charts/CategoryPieChart';
@@ -9,19 +8,22 @@ import { Badge } from '../components/ui/Badge';
 import { useStore } from '../store/useStore';
 import { useFormatCurrency } from '../hooks/useFormatCurrency';
 import { getMonthKey } from '../utils/filter';
+import { currentMonthKey, prevMonthKey } from '../utils/date';
 import { formatDate } from '../utils/format';
+import { CATEGORIES, CATEGORY_LABELS } from '../types';
+import type { Category } from '../types';
 
 export function Dashboard() {
   const { expenses } = useStore();
   const formatCurrency = useFormatCurrency();
-  const currentMonth = getMonthKey(new Date().toISOString());
-  const prevMonthKey = getMonthKey(subMonths(new Date(), 1).toISOString());
+  const currentMonth = currentMonthKey();
+  const prevMonth = prevMonthKey();
 
   const monthExpenses = expenses.filter(
     (e) => getMonthKey(e.date) === currentMonth
   );
   const lastMonthExpenses = expenses.filter(
-    (e) => getMonthKey(e.date) === prevMonthKey
+    (e) => getMonthKey(e.date) === prevMonth
   );
 
   const totalMonth = monthExpenses.reduce((s, e) => s + e.amount, 0);
@@ -32,14 +34,20 @@ export function Dashboard() {
       ? totalMonth / new Date().getDate()
       : 0;
 
-  const topCategory = monthExpenses.reduce<{ category: string; amount: number }>(
-    (best, e) => {
-      const amt = monthExpenses
-        .filter((x) => x.category === e.category)
-        .reduce((s, x) => s + x.amount, 0);
-      return amt > best.amount ? { category: e.category, amount: amt } : best;
+  const totalsByCategory: Partial<Record<Category, number>> = {};
+  for (const e of monthExpenses) {
+    totalsByCategory[e.category] =
+      (totalsByCategory[e.category] ?? 0) + e.amount;
+  }
+  const topCategory = CATEGORIES.reduce<{
+    category: Category | null;
+    amount: number;
+  }>(
+    (best, cat) => {
+      const amt = totalsByCategory[cat] ?? 0;
+      return amt > best.amount ? { category: cat, amount: amt } : best;
     },
-    { category: '', amount: 0 }
+    { category: null, amount: 0 }
   );
 
   const monthChange =
@@ -72,7 +80,11 @@ export function Dashboard() {
         />
         <StatCard
           title="Top Category"
-          value={topCategory.amount > 0 ? topCategory.category : 'N/A'}
+          value={
+            topCategory.category
+              ? CATEGORY_LABELS[topCategory.category]
+              : 'N/A'
+          }
           icon={<TrendingDown size={20} className="md:size-6" />}
         />
         <StatCard

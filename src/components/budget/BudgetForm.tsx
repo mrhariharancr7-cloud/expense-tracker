@@ -3,6 +3,7 @@ import { Input } from '../ui/Input';
 import { Select } from '../ui/Select';
 import { Button } from '../ui/Button';
 import { useStore } from '../../store/useStore';
+import { currentMonthKey } from '../../utils/date';
 import { CATEGORIES, CATEGORY_LABELS } from '../../types';
 import type { Category } from '../../types';
 
@@ -17,7 +18,7 @@ const categoryOptions = [
 
 export function BudgetForm({ onClose }: BudgetFormProps) {
   const setBudget = useStore((s) => s.setBudget);
-  const currentMonth = new Date().toISOString().slice(0, 7);
+  const currentMonth = currentMonthKey();
 
   const [category, setCategory] = useState<string>('overall');
   const [amount, setAmount] = useState('');

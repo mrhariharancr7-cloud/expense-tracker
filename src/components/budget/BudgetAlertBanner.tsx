@@ -2,11 +2,12 @@ import { AlertTriangle } from 'lucide-react';
 import { useStore } from '../../store/useStore';
 import { useFormatCurrency } from '../../hooks/useFormatCurrency';
 import { getMonthKey } from '../../utils/filter';
+import { currentMonthKey } from '../../utils/date';
 
 export function BudgetAlertBanner() {
   const { expenses, budgets } = useStore();
   const formatCurrency = useFormatCurrency();
-  const currentMonth = getMonthKey(new Date().toISOString());
+  const currentMonth = currentMonthKey();
 
   const monthExpenses = expenses.filter(
     (e) => getMonthKey(e.date) === currentMonth
